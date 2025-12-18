@@ -1,6 +1,6 @@
 // statisticsService.js - Service untuk menghandle API calls terkait statistics
-
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'https://ruang-kelas-server-2jhz.vercel.app';
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'https://ruang-kelas-alfalah-server.vercel.app'; // Use backend URL from env or default to backend port
+// const API_BASE_URL = import.meta.env.VITE_API_URL || 'https://ruang-kelas-server-2jhz.vercel.app';
 // const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3002'; // Use backend URL from env or default to backend port
 
 class StatisticsService {
