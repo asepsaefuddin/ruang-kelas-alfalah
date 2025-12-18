@@ -1,0 +1,1369 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Admin - Learning Management System</title>
+    <style>
+        body {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #ffffff;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .dashboard-container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 280px;
+            background: #ffffff;
+            box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+            border-right: 1px solid #e5e7eb;
+            padding: 20px 0;
+            position: fixed;
+            height: 100vh;
+            z-index: 1000;
+            transition: all 0.3s ease;
+        }
+
+        .sidebar-header {
+            padding: 0 25px 30px;
+            border-bottom: 1px solid #e5e7eb;
+            margin-bottom: 30px;
+        }
+
+        .logo {
+            color: #1f2937;
+            font-size: 1.5rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .logo::before {
+            content: "📚";
+            font-size: 2rem;
+        }
+
+        .nav-menu {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .nav-item {
+            margin-bottom: 5px;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            padding: 15px 25px;
+            color: #6b7280;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            border-left: 3px solid transparent;
+            gap: 15px;
+            font-weight: 500;
+        }
+
+        .nav-link:hover {
+            background: #f3f4f6;
+            color: #1f2937;
+            border-left-color: #3b82f6;
+        }
+
+        .nav-link.active {
+            background: #eff6ff;
+            color: #1e40af;
+            border-left-color: #3b82f6;
+        }
+
+        .nav-icon {
+            font-size: 1.2rem;
+            width: 20px;
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            margin-left: 280px;
+            padding: 30px;
+            transition: all 0.3s ease;
+        }
+
+        .page {
+            display: none;
+            animation: fadeIn 0.5s ease-in-out;
+        }
+
+        .page.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .page-header {
+            background: #ffffff;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            border: 1px solid #e5e7eb;
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 30px;
+            color: #1f2937;
+        }
+
+        .page-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin: 0 0 10px 0;
+            color: #1f2937;
+        }
+
+        .page-subtitle {
+            font-size: 1.1rem;
+            color: #6b7280;
+            margin: 0;
+        }
+
+        /* Cards */
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+
+        .card {
+            background: #ffffff;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            border: 1px solid #e5e7eb;
+            border-radius: 20px;
+            padding: 25px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #3b82f6, #8b5cf6, #ec4899);
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+
+        .card-title {
+            color: #1f2937;
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin: 0;
+        }
+
+        .card-icon {
+            font-size: 2rem;
+            opacity: 0.8;
+        }
+
+        .card-content {
+            color: #4b5563;
+            line-height: 1.6;
+        }
+
+        /* Stats Cards */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: #ffffff;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            border: 1px solid #e5e7eb;
+            border-radius: 15px;
+            padding: 25px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: scale(1.05);
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.15);
+        }
+
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #1f2937;
+            margin-bottom: 10px;
+            display: block;
+        }
+
+        .stat-label {
+            color: #6b7280;
+            font-size: 1rem;
+            font-weight: 500;
+        }
+
+        .stat-trend {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            font-size: 1.5rem;
+        }
+
+        /* Forms */
+        .form-container {
+            background: #ffffff;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            border: 1px solid #e5e7eb;
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 30px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            color: #1f2937;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .form-input, .form-select, .form-textarea {
+            width: 100%;
+            padding: 12px 16px;
+            background: #ffffff;
+            border: 1px solid #d1d5db;
+            border-radius: 10px;
+            color: #1f2937;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            box-sizing: border-box;
+        }
+
+        .form-input:focus, .form-select:focus, .form-textarea:focus {
+            outline: none;
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+
+        .form-input::placeholder, .form-textarea::placeholder {
+            color: #9ca3af;
+        }
+
+        .form-textarea {
+            resize: vertical;
+            min-height: 120px;
+        }
+
+        /* Buttons */
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+            text-align: center;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+            color: #fff;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(59, 130, 246, 0.3);
+        }
+
+        .btn-secondary {
+            background: #f3f4f6;
+            color: #374151;
+            border: 1px solid #d1d5db;
+        }
+
+        .btn-secondary:hover {
+            background: #e5e7eb;
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+            color: #fff;
+        }
+
+        .btn-danger:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(239, 68, 68, 0.3);
+        }
+
+        /* Tables */
+        .table-container {
+            background: #ffffff;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            border: 1px solid #e5e7eb;
+            border-radius: 20px;
+            padding: 25px;
+            overflow-x: auto;
+        }
+
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+            color: #1f2937;
+        }
+
+        .table th {
+            background: #f9fafb;
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .table td {
+            padding: 15px;
+            border-bottom: 1px solid #f3f4f6;
+        }
+
+        .table tr:hover {
+            background: #f9fafb;
+        }
+
+        /* Chart Container */
+        .chart-container {
+            background: #ffffff;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            border: 1px solid #e5e7eb;
+            border-radius: 20px;
+            padding: 25px;
+            margin-bottom: 30px;
+            height: 300px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #1f2937;
+            font-size: 1.1rem;
+        }
+
+        /* Question Builder */
+        .question-item {
+            background: #f9fafb;
+            border: 1px solid #e5e7eb;
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .question-header {
+            display: flex;
+            justify-content: between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .question-number {
+            background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+            color: #fff;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            margin-right: 15px;
+        }
+
+        .option-group {
+            margin-left: 45px;
+        }
+
+        .option-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+            gap: 10px;
+        }
+
+        .option-input {
+            flex: 1;
+        }
+
+        /* Mobile Menu Toggle */
+        .mobile-menu-toggle {
+            display: none;
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            z-index: 1001;
+            background: #3b82f6;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            padding: 12px;
+            font-size: 1.2rem;
+            cursor: pointer;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .mobile-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 999;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .mobile-menu-toggle {
+                display: block;
+            }
+
+            .sidebar {
+                width: 280px;
+                transform: translateX(-100%);
+                transition: transform 0.3s ease;
+            }
+
+            .sidebar.mobile-open {
+                transform: translateX(0);
+            }
+
+            .mobile-overlay.active {
+                display: block;
+            }
+
+            .main-content {
+                margin-left: 0;
+                padding: 80px 15px 20px;
+                width: 100%;
+            }
+
+            .page-header {
+                padding: 20px;
+                margin-bottom: 20px;
+            }
+
+            .page-title {
+                font-size: 1.8rem;
+            }
+
+            .page-subtitle {
+                font-size: 1rem;
+            }
+
+            .card-grid {
+                grid-template-columns: 1fr;
+                gap: 15px;
+            }
+
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 15px;
+            }
+
+            .card, .stat-card, .form-container, .table-container {
+                padding: 20px;
+                border-radius: 15px;
+            }
+
+            .form-container > div[style*="grid-template-columns"] {
+                grid-template-columns: 1fr !important;
+                gap: 15px;
+            }
+
+            .table-container {
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+            }
+
+            .table {
+                min-width: 600px;
+            }
+
+            .option-group {
+                margin-left: 0;
+            }
+
+            .question-item {
+                padding: 15px;
+            }
+
+            .question-header > div {
+                flex-direction: column;
+                align-items: stretch !important;
+            }
+
+            .question-number {
+                margin-right: 0;
+                margin-bottom: 15px;
+                align-self: flex-start;
+            }
+
+            .option-item {
+                flex-wrap: wrap;
+                gap: 10px;
+            }
+
+            .option-input {
+                min-width: 200px;
+            }
+
+            .btn {
+                width: 100%;
+                margin-bottom: 10px;
+            }
+
+            .btn + .btn {
+                margin-left: 0;
+            }
+
+            .stat-card:hover {
+                transform: scale(1.02);
+            }
+
+            .card:hover {
+                transform: translateY(-2px);
+            }
+        }
+
+        @media (max-width: 480px) {
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .page-title {
+                font-size: 1.5rem;
+            }
+
+            .stat-number {
+                font-size: 2rem;
+            }
+
+            .mobile-menu-toggle {
+                top: 15px;
+                left: 15px;
+                padding: 10px;
+            }
+
+            .main-content {
+                padding: 70px 10px 15px;
+            }
+
+            .card, .stat-card, .form-container, .table-container {
+                padding: 15px;
+            }
+
+            .table th, .table td {
+                padding: 10px 8px;
+                font-size: 0.9rem;
+            }
+        }
+
+        /* Loading Animation */
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: #fff;
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard-container">
+        <!-- Mobile Menu Toggle -->
+        <button class="mobile-menu-toggle" id="mobileMenuToggle">☰</button>
+        
+        <!-- Mobile Overlay -->
+        <div class="mobile-overlay" id="mobileOverlay"></div>
+        
+        <!-- Sidebar -->
+        <nav class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <div class="logo">
+                    <span class="nav-text">EduAdmin</span>
+                </div>
+            </div>
+            <ul class="nav-menu">
+                <li class="nav-item">
+                    <a href="#" class="nav-link active" data-page="dashboard">
+                        <span class="nav-icon">📊</span>
+                        <span class="nav-text">Dashboard</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link" data-page="users">
+                        <span class="nav-icon">👥</span>
+                        <span class="nav-text">Management User</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link" data-page="questions">
+                        <span class="nav-icon">❓</span>
+                        <span class="nav-text">Buat Soal</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link" data-page="reports">
+                        <span class="nav-icon">📋</span>
+                        <span class="nav-text">Laporan Penilaian</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link" data-page="statistics">
+                        <span class="nav-icon">📈</span>
+                        <span class="nav-text">Statistik</span>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Dashboard Page -->
+            <div id="dashboard" class="page active">
+                <div class="page-header">
+                    <h1 class="page-title">Dashboard</h1>
+                    <p class="page-subtitle">Selamat datang di sistem manajemen pembelajaran</p>
+                </div>
+
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <span class="stat-trend">📈</span>
+                        <span class="stat-number">1,247</span>
+                        <span class="stat-label">Total Siswa</span>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-trend">✅</span>
+                        <span class="stat-number">892</span>
+                        <span class="stat-label">Siswa Aktif</span>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-trend">📝</span>
+                        <span class="stat-number">156</span>
+                        <span class="stat-label">Total Soal</span>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-trend">🎯</span>
+                        <span class="stat-number">89%</span>
+                        <span class="stat-label">Rata-rata Nilai</span>
+                    </div>
+                </div>
+
+                <div class="card-grid">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">Aktivitas Terbaru</h3>
+                            <span class="card-icon">🔔</span>
+                        </div>
+                        <div class="card-content">
+                            <p>• 15 siswa baru mendaftar hari ini</p>
+                            <p>• 23 soal baru ditambahkan</p>
+                            <p>• 45 ujian telah diselesaikan</p>
+                            <p>• 8 laporan penilaian dibuat</p>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">Performa Sistem</h3>
+                            <span class="card-icon">⚡</span>
+                        </div>
+                        <div class="card-content">
+                            <p>• Server uptime: 99.9%</p>
+                            <p>• Response time: 120ms</p>
+                            <p>• Database queries: 1,234</p>
+                            <p>• Active sessions: 156</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Users Management Page -->
+            <div id="users" class="page">
+                <div class="page-header">
+                    <h1 class="page-title">Management User</h1>
+                    <p class="page-subtitle">Kelola pengguna sistem pembelajaran</p>
+                </div>
+
+                <div class="form-container">
+                    <h3 style="color: #1f2937; margin-bottom: 20px;">Tambah User Baru</h3>
+                    <form id="userForm">
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                            <div class="form-group">
+                                <label class="form-label">Nama Lengkap</label>
+                                <input type="text" class="form-input" placeholder="Masukkan nama lengkap" required>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Email</label>
+                                <input type="email" class="form-input" placeholder="Masukkan email" required>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Role</label>
+                                <select class="form-select" required>
+                                    <option value="">Pilih Role</option>
+                                    <option value="student">Siswa</option>
+                                    <option value="teacher">Guru</option>
+                                    <option value="admin">Admin</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Kelas</label>
+                                <select class="form-select">
+                                    <option value="">Pilih Kelas</option>
+                                    <option value="10A">10A</option>
+                                    <option value="10B">10B</option>
+                                    <option value="11A">11A</option>
+                                    <option value="11B">11B</option>
+                                    <option value="12A">12A</option>
+                                    <option value="12B">12B</option>
+                                </select>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Tambah User</button>
+                    </form>
+                </div>
+
+                <div class="table-container">
+                    <h3 style="color: #1f2937; margin-bottom: 20px;">Daftar User</h3>
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Nama</th>
+                                <th>Email</th>
+                                <th>Role</th>
+                                <th>Kelas</th>
+                                <th>Status</th>
+                                <th>Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody id="userTableBody">
+                            <tr>
+                                <td>001</td>
+                                <td>Ahmad Rizki</td>
+                                <td>ahmad@email.com</td>
+                                <td>Siswa</td>
+                                <td>10A</td>
+                                <td>Aktif</td>
+                                <td>
+                                    <button class="btn btn-secondary" style="margin-right: 5px; padding: 5px 10px;">Edit</button>
+                                    <button class="btn btn-danger" style="padding: 5px 10px;">Hapus</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>002</td>
+                                <td>Siti Nurhaliza</td>
+                                <td>siti@email.com</td>
+                                <td>Siswa</td>
+                                <td>10B</td>
+                                <td>Aktif</td>
+                                <td>
+                                    <button class="btn btn-secondary" style="margin-right: 5px; padding: 5px 10px;">Edit</button>
+                                    <button class="btn btn-danger" style="padding: 5px 10px;">Hapus</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>003</td>
+                                <td>Budi Santoso</td>
+                                <td>budi@email.com</td>
+                                <td>Guru</td>
+                                <td>-</td>
+                                <td>Aktif</td>
+                                <td>
+                                    <button class="btn btn-secondary" style="margin-right: 5px; padding: 5px 10px;">Edit</button>
+                                    <button class="btn btn-danger" style="padding: 5px 10px;">Hapus</button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Questions Page -->
+            <div id="questions" class="page">
+                <div class="page-header">
+                    <h1 class="page-title">Buat Soal</h1>
+                    <p class="page-subtitle">Buat dan kelola soal ujian</p>
+                </div>
+
+                <div class="form-container">
+                    <h3 style="color: #fff; margin-bottom: 20px;">Informasi Ujian</h3>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 30px;">
+                        <div class="form-group">
+                            <label class="form-label">Judul Ujian</label>
+                            <input type="text" class="form-input" placeholder="Masukkan judul ujian" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Mata Pelajaran</label>
+                            <select class="form-select" required>
+                                <option value="">Pilih Mata Pelajaran</option>
+                                <option value="matematika">Matematika</option>
+                                <option value="fisika">Fisika</option>
+                                <option value="kimia">Kimia</option>
+                                <option value="biologi">Biologi</option>
+                                <option value="bahasa">Bahasa Indonesia</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Durasi (menit)</label>
+                            <input type="number" class="form-input" placeholder="90" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Kelas</label>
+                            <select class="form-select" required>
+                                <option value="">Pilih Kelas</option>
+                                <option value="10">Kelas 10</option>
+                                <option value="11">Kelas 11</option>
+                                <option value="12">Kelas 12</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Tipe Soal Default</label>
+                            <select class="form-select" id="defaultQuestionType" required>
+                                <option value="">Pilih Tipe Soal</option>
+                                <option value="multiple-choice">Pilihan Ganda</option>
+                                <option value="essay">Esai</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <h3 style="color: #fff; margin-bottom: 20px;">Soal-soal</h3>
+                    <div id="questionsContainer">
+                        <div class="question-item">
+                            <div class="question-header">
+                                <div style="display: flex; align-items: center; gap: 15px;">
+                                    <div class="question-number">1</div>
+                                    <div style="flex: 1;">
+                                        <div class="form-group" style="margin-bottom: 15px;">
+                                            <textarea class="form-textarea" placeholder="Masukkan pertanyaan..." style="min-height: 80px;"></textarea>
+                                        </div>
+                                        <div class="form-group" style="margin-bottom: 0;">
+                                            <select class="form-select question-type-select" onchange="toggleQuestionType(this, 1)">
+                                                <option value="multiple-choice">Pilihan Ganda</option>
+                                                <option value="essay">Esai</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="option-group" id="options-1">
+                                <div class="option-item">
+                                    <span style="color: #fff; margin-right: 10px;">A.</span>
+                                    <input type="text" class="form-input option-input" placeholder="Pilihan A">
+                                    <input type="radio" name="correct1" value="A">
+                                </div>
+                                <div class="option-item">
+                                    <span style="color: #fff; margin-right: 10px;">B.</span>
+                                    <input type="text" class="form-input option-input" placeholder="Pilihan B">
+                                    <input type="radio" name="correct1" value="B">
+                                </div>
+                                <div class="option-item">
+                                    <span style="color: #fff; margin-right: 10px;">C.</span>
+                                    <input type="text" class="form-input option-input" placeholder="Pilihan C">
+                                    <input type="radio" name="correct1" value="C">
+                                </div>
+                                <div class="option-item">
+                                    <span style="color: #fff; margin-right: 10px;">D.</span>
+                                    <input type="text" class="form-input option-input" placeholder="Pilihan D">
+                                    <input type="radio" name="correct1" value="D">
+                                </div>
+                            </div>
+                            <div class="essay-group" id="essay-1" style="display: none;">
+                                <div class="form-group">
+                                    <label class="form-label" style="color: #fff;">Kunci Jawaban / Rubrik Penilaian</label>
+                                    <textarea class="form-textarea" placeholder="Masukkan kunci jawaban atau rubrik penilaian untuk soal esai..." style="min-height: 100px;"></textarea>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label" style="color: #fff;">Bobot Nilai</label>
+                                    <input type="number" class="form-input" placeholder="10" min="1" max="100" value="10">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div style="margin-top: 20px;">
+                        <button type="button" class="btn btn-secondary" id="addQuestionBtn">Tambah Soal</button>
+                        <button type="button" class="btn btn-primary" style="margin-left: 10px;">Simpan Ujian</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Reports Page -->
+            <div id="reports" class="page">
+                <div class="page-header">
+                    <h1 class="page-title">Laporan Penilaian</h1>
+                    <p class="page-subtitle">Lihat dan analisis hasil ujian siswa</p>
+                </div>
+
+                <div class="card-grid">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">Filter Laporan</h3>
+                            <span class="card-icon">🔍</span>
+                        </div>
+                        <div class="card-content">
+                            <div class="form-group">
+                                <label class="form-label">Mata Pelajaran</label>
+                                <select class="form-select">
+                                    <option value="">Semua Mata Pelajaran</option>
+                                    <option value="matematika">Matematika</option>
+                                    <option value="fisika">Fisika</option>
+                                    <option value="kimia">Kimia</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Kelas</label>
+                                <select class="form-select">
+                                    <option value="">Semua Kelas</option>
+                                    <option value="10A">10A</option>
+                                    <option value="10B">10B</option>
+                                    <option value="11A">11A</option>
+                                </select>
+                            </div>
+                            <button class="btn btn-primary">Terapkan Filter</button>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">Ringkasan Nilai</h3>
+                            <span class="card-icon">📊</span>
+                        </div>
+                        <div class="card-content">
+                            <p><strong>Rata-rata Kelas:</strong> 85.6</p>
+                            <p><strong>Nilai Tertinggi:</strong> 98</p>
+                            <p><strong>Nilai Terendah:</strong> 65</p>
+                            <p><strong>Jumlah Siswa:</strong> 32</p>
+                            <p><strong>Tingkat Kelulusan:</strong> 94%</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="table-container">
+                    <h3 style="color: #fff; margin-bottom: 20px;">Hasil Ujian Terbaru</h3>
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Nama Siswa</th>
+                                <th>Kelas</th>
+                                <th>Mata Pelajaran</th>
+                                <th>Judul Ujian</th>
+                                <th>Nilai</th>
+                                <th>Tanggal</th>
+                                <th>Status</th>
+                                <th>Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Ahmad Rizki</td>
+                                <td>10A</td>
+                                <td>Matematika</td>
+                                <td>Ujian Tengah Semester</td>
+                                <td>85</td>
+                                <td>2024-01-15</td>
+                                <td>Lulus</td>
+                                <td><button class="btn btn-secondary" style="padding: 5px 10px;">Detail</button></td>
+                            </tr>
+                            <tr>
+                                <td>Siti Nurhaliza</td>
+                                <td>10B</td>
+                                <td>Fisika</td>
+                                <td>Quiz Harian</td>
+                                <td>92</td>
+                                <td>2024-01-14</td>
+                                <td>Lulus</td>
+                                <td><button class="btn btn-secondary" style="padding: 5px 10px;">Detail</button></td>
+                            </tr>
+                            <tr>
+                                <td>Budi Pratama</td>
+                                <td>11A</td>
+                                <td>Kimia</td>
+                                <td>Ujian Praktikum</td>
+                                <td>78</td>
+                                <td>2024-01-13</td>
+                                <td>Lulus</td>
+                                <td><button class="btn btn-secondary" style="padding: 5px 10px;">Detail</button></td>
+                            </tr>
+                            <tr>
+                                <td>Dewi Sartika</td>
+                                <td>12A</td>
+                                <td>Biologi</td>
+                                <td>Ujian Akhir</td>
+                                <td>95</td>
+                                <td>2024-01-12</td>
+                                <td>Lulus</td>
+                                <td><button class="btn btn-secondary" style="padding: 5px 10px;">Detail</button></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Statistics Page -->
+            <div id="statistics" class="page">
+                <div class="page-header">
+                    <h1 class="page-title">Statistik</h1>
+                    <p class="page-subtitle">Analisis mendalam performa sistem dan pengguna</p>
+                </div>
+
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <span class="stat-trend">👥</span>
+                        <span class="stat-number">1,247</span>
+                        <span class="stat-label">Total User</span>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-trend">🟢</span>
+                        <span class="stat-number">892</span>
+                        <span class="stat-label">User Aktif</span>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-trend">📈</span>
+                        <span class="stat-number">71.5%</span>
+                        <span class="stat-label">Tingkat Aktivitas</span>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-trend">⏱️</span>
+                        <span class="stat-number">2.5h</span>
+                        <span class="stat-label">Rata-rata Sesi</span>
+                    </div>
+                </div>
+
+                <div class="card-grid">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">Analitik Penggunaan</h3>
+                            <span class="card-icon">📊</span>
+                        </div>
+                        <div class="card-content">
+                            <div class="chart-container" style="height: 200px;">
+                                <div style="text-align: center;">
+                                    <p>📈 Grafik Penggunaan Harian</p>
+                                    <p style="font-size: 0.9rem; opacity: 0.8;">Menampilkan tren aktivitas pengguna dalam 30 hari terakhir</p>
+                                    <div style="margin-top: 20px;">
+                                        <span style="background: #4f46e5; padding: 5px 15px; border-radius: 20px; margin: 0 5px;">Senin: 234</span>
+                                        <span style="background: #7c3aed; padding: 5px 15px; border-radius: 20px; margin: 0 5px;">Selasa: 189</span>
+                                        <span style="background: #ec4899; padding: 5px 15px; border-radius: 20px; margin: 0 5px;">Rabu: 267</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">Distribusi Pengguna</h3>
+                            <span class="card-icon">🥧</span>
+                        </div>
+                        <div class="card-content">
+                            <div style="margin-bottom: 15px;">
+                                <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                                    <span>Siswa</span>
+                                    <span>1,089 (87%)</span>
+                                </div>
+                                <div style="background: rgba(255,255,255,0.1); height: 8px; border-radius: 4px;">
+                                    <div style="background: #4f46e5; height: 100%; width: 87%; border-radius: 4px;"></div>
+                                </div>
+                            </div>
+                            <div style="margin-bottom: 15px;">
+                                <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                                    <span>Guru</span>
+                                    <span>142 (11%)</span>
+                                </div>
+                                <div style="background: rgba(255,255,255,0.1); height: 8px; border-radius: 4px;">
+                                    <div style="background: #7c3aed; height: 100%; width: 11%; border-radius: 4px;"></div>
+                                </div>
+                            </div>
+                            <div style="margin-bottom: 15px;">
+                                <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                                    <span>Admin</span>
+                                    <span>16 (2%)</span>
+                                </div>
+                                <div style="background: rgba(255,255,255,0.1); height: 8px; border-radius: 4px;">
+                                    <div style="background: #ec4899; height: 100%; width: 2%; border-radius: 4px;"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card-grid">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">Performa Ujian</h3>
+                            <span class="card-icon">🎯</span>
+                        </div>
+                        <div class="card-content">
+                            <p><strong>Total Ujian Selesai:</strong> 2,456</p>
+                            <p><strong>Rata-rata Nilai:</strong> 84.2</p>
+                            <p><strong>Tingkat Kelulusan:</strong> 91%</p>
+                            <p><strong>Ujian Terpopuler:</strong> Matematika</p>
+                            <p><strong>Waktu Rata-rata:</strong> 45 menit</p>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">Aktivitas Sistem</h3>
+                            <span class="card-icon">⚡</span>
+                        </div>
+                        <div class="card-content">
+                            <p><strong>Login Hari Ini:</strong> 456</p>
+                            <p><strong>Soal Dibuat:</strong> 23</p>
+                            <p><strong>Laporan Diunduh:</strong> 67</p>
+                            <p><strong>Peak Hours:</strong> 10:00 - 12:00</p>
+                            <p><strong>Server Load:</strong> 67%</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // Navigation functionality
+        const navLinks = document.querySelectorAll('.nav-link');
+        const pages = document.querySelectorAll('.page');
+
+        navLinks.forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                
+                // Remove active class from all links and pages
+                navLinks.forEach(l => l.classList.remove('active'));
+                pages.forEach(p => p.classList.remove('active'));
+                
+                // Add active class to clicked link
+                link.classList.add('active');
+                
+                // Show corresponding page
+                const pageId = link.getAttribute('data-page');
+                document.getElementById(pageId).classList.add('active');
+            });
+        });
+
+        // User form submission
+        document.getElementById('userForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const button = e.target.querySelector('button[type="submit"]');
+            const originalText = button.innerHTML;
+            
+            button.innerHTML = '<span class="loading"></span> Menambahkan...';
+            button.disabled = true;
+            
+            setTimeout(() => {
+                alert('User berhasil ditambahkan!');
+                e.target.reset();
+                button.innerHTML = originalText;
+                button.disabled = false;
+            }, 1500);
+        });
+
+        // Toggle question type functionality
+        function toggleQuestionType(selectElement, questionNumber) {
+            const optionsGroup = document.getElementById(`options-${questionNumber}`);
+            const essayGroup = document.getElementById(`essay-${questionNumber}`);
+            
+            if (selectElement.value === 'essay') {
+                optionsGroup.style.display = 'none';
+                essayGroup.style.display = 'block';
+            } else {
+                optionsGroup.style.display = 'block';
+                essayGroup.style.display = 'none';
+            }
+        }
+
+        // Add question functionality
+        let questionCount = 1;
+        document.getElementById('addQuestionBtn').addEventListener('click', function() {
+            questionCount++;
+            const container = document.getElementById('questionsContainer');
+            const defaultType = document.getElementById('defaultQuestionType').value || 'multiple-choice';
+            
+            const questionHTML = `
+                <div class="question-item">
+                    <div class="question-header">
+                        <div style="display: flex; align-items: center; gap: 15px;">
+                            <div class="question-number">${questionCount}</div>
+                            <div style="flex: 1;">
+                                <div class="form-group" style="margin-bottom: 15px;">
+                                    <textarea class="form-textarea" placeholder="Masukkan pertanyaan..." style="min-height: 80px;"></textarea>
+                                </div>
+                                <div class="form-group" style="margin-bottom: 0;">
+                                    <select class="form-select question-type-select" onchange="toggleQuestionType(this, ${questionCount})">
+                                        <option value="multiple-choice" ${defaultType === 'multiple-choice' ? 'selected' : ''}>Pilihan Ganda</option>
+                                        <option value="essay" ${defaultType === 'essay' ? 'selected' : ''}>Esai</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="option-group" id="options-${questionCount}" style="display: ${defaultType === 'essay' ? 'none' : 'block'};">
+                        <div class="option-item">
+                            <span style="color: #fff; margin-right: 10px;">A.</span>
+                            <input type="text" class="form-input option-input" placeholder="Pilihan A">
+                            <input type="radio" name="correct${questionCount}" value="A">
+                        </div>
+                        <div class="option-item">
+                            <span style="color: #fff; margin-right: 10px;">B.</span>
+                            <input type="text" class="form-input option-input" placeholder="Pilihan B">
+                            <input type="radio" name="correct${questionCount}" value="B">
+                        </div>
+                        <div class="option-item">
+                            <span style="color: #fff; margin-right: 10px;">C.</span>
+                            <input type="text" class="form-input option-input" placeholder="Pilihan C">
+                            <input type="radio" name="correct${questionCount}" value="C">
+                        </div>
+                        <div class="option-item">
+                            <span style="color: #fff; margin-right: 10px;">D.</span>
+                            <input type="text" class="form-input option-input" placeholder="Pilihan D">
+                            <input type="radio" name="correct${questionCount}" value="D">
+                        </div>
+                    </div>
+                    <div class="essay-group" id="essay-${questionCount}" style="display: ${defaultType === 'essay' ? 'block' : 'none'};">
+                        <div class="form-group">
+                            <label class="form-label" style="color: #fff;">Kunci Jawaban / Rubrik Penilaian</label>
+                            <textarea class="form-textarea" placeholder="Masukkan kunci jawaban atau rubrik penilaian untuk soal esai..." style="min-height: 100px;"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" style="color: #fff;">Bobot Nilai</label>
+                            <input type="number" class="form-input" placeholder="10" min="1" max="100" value="10">
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            container.insertAdjacentHTML('beforeend', questionHTML);
+        });
+
+        // Simulate real-time updates
+        setInterval(() => {
+            const activeUsers = document.querySelector('.stat-card .stat-number');
+            if (activeUsers && activeUsers.textContent === '892') {
+                const currentValue = parseInt(activeUsers.textContent);
+                const newValue = currentValue + Math.floor(Math.random() * 5) - 2;
+                activeUsers.textContent = Math.max(850, Math.min(950, newValue));
+            }
+        }, 5000);
+
+        // Add hover effects to cards
+        document.querySelectorAll('.card, .stat-card').forEach(card => {
+            card.addEventListener('mouseenter', function() {
+                this.style.transform = 'translateY(-5px) scale(1.02)';
+            });
+            
+            card.addEventListener('mouseleave', function() {
+                this.style.transform = 'translateY(0) scale(1)';
+            });
+        });
+
+        // Responsive sidebar toggle
+        function toggleSidebar() {
+            const sidebar = document.querySelector('.sidebar');
+            const mainContent = document.querySelector('.main-content');
+            
+            if (window.innerWidth <= 768) {
+                sidebar.style.width = sidebar.style.width === '70px' ? '280px' : '70px';
+                mainContent.style.marginLeft = sidebar.style.width === '280px' ? '280px' : '70px';
+            }
+        }
+
+        // Mobile menu functionality
+        const mobileMenuToggle = document.getElementById('mobileMenuToggle');
+        const sidebar = document.getElementById('sidebar');
+        const mobileOverlay = document.getElementById('mobileOverlay');
+
+        function toggleMobileMenu() {
+            sidebar.classList.toggle('mobile-open');
+            mobileOverlay.classList.toggle('active');
+        }
+
+        function closeMobileMenu() {
+            sidebar.classList.remove('mobile-open');
+            mobileOverlay.classList.remove('active');
+        }
+
+        mobileMenuToggle.addEventListener('click', toggleMobileMenu);
+        mobileOverlay.addEventListener('click', closeMobileMenu);
+
+        // Close mobile menu when clicking nav links
+        navLinks.forEach(link => {
+            link.addEventListener('click', () => {
+                if (window.innerWidth <= 768) {
+                    closeMobileMenu();
+                }
+            });
+        });
+
+        // Handle window resize
+        window.addEventListener('resize', function() {
+            if (window.innerWidth > 768) {
+                closeMobileMenu();
+            }
+        });
+
+        // Prevent body scroll when mobile menu is open
+        const observer = new MutationObserver(function(mutations) {
+            mutations.forEach(function(mutation) {
+                if (mutation.target.classList.contains('mobile-open')) {
+                    document.body.style.overflow = 'hidden';
+                } else {
+                    document.body.style.overflow = '';
+                }
+            });
+        });
+
+        observer.observe(sidebar, {
+            attributes: true,
+            attributeFilter: ['class']
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,167 @@
+{
+  "info": {
+    "name": "Answer API - Ujian",
+    "_postman_id": "answer-api-ujian-collection",
+    "description": "Collection untuk menguji endpoint /answer dan /answer/:kode (autosave, submit, fetch).",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "GET - Get Soal by Kode",
+      "request": {
+        "method": "GET",
+        "header": [
+          { "key": "Authorization", "value": "{{token}}", "type": "text" },
+          { "key": "Accept", "value": "application/json", "type": "text" }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/answer/{{kode}}",
+          "host": ["{{baseUrl}}"],
+          "path": ["answer", "{{kode}}"]
+        }
+      },
+      "response": [],
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Status code is 200', function () {",
+              "  pm.response.to.have.status(200);",
+              "});",
+              "var json = pm.response.json();",
+              "pm.test('Response success true', function () {",
+              "  pm.expect(json.success).to.be.true;",
+              "});",
+              "pm.test('Soal array exists', function () {",
+              "  pm.expect(json.data).to.have.property('soal');",
+              "  pm.expect(json.data.soal).to.be.an('array');",
+              "});",
+              "pm.test('Gambar hadir jika disediakan', function () {",
+              "  if (json.data.soal.length > 0) {",
+              "    pm.expect(json.data.soal[0]).to.have.property('gambar');",
+              "  }",
+              "});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "GET - Get Saved Answers for Student",
+      "request": {
+        "method": "GET",
+        "header": [
+          { "key": "Authorization", "value": "{{token}}", "type": "text" },
+          { "key": "Accept", "value": "application/json", "type": "text" }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/answer/{{kode}}?studentId={{studentId}}",
+          "host": ["{{baseUrl}}"],
+          "path": ["answer", "{{kode}}"],
+          "query": [
+            { "key": "studentId", "value": "{{studentId}}" }
+          ]
+        }
+      },
+      "response": [],
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Status code is 200', function () { pm.response.to.have.status(200); });",
+              "var json = pm.response.json();",
+              "pm.test('Has answers object', function () {",
+              "  pm.expect(json.success).to.be.true;",
+              "  pm.expect(json.data).to.have.property('answers');",
+              "});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "POST - Autosave Single Answer",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Authorization", "value": "{{token}}", "type": "text" },
+          { "key": "Content-Type", "value": "application/json", "type": "text" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"kode\": \"{{kode}}\",\n  \"studentId\": \"{{studentId}}\",\n  \"nomor\": 1,\n  \"answer\": \"c\",\n  \"mode\": \"autosave\"\n}",
+          "options": { "raw": { "language": "json" } }
+        },
+        "url": { "raw": "{{baseUrl}}/answer", "host": ["{{baseUrl}}"], "path": ["answer"] }
+      },
+      "response": [],
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Status 200', function () { pm.response.to.have.status(200); });",
+              "var json = pm.response.json();",
+              "pm.test('Saved OK', function () { pm.expect(json.success).to.be.true; });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "PUT - Update Answer",
+      "request": {
+        "method": "PUT",
+        "header": [
+          { "key": "Authorization", "value": "{{token}}", "type": "text" },
+          { "key": "Content-Type", "value": "application/json", "type": "text" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"kode\": \"{{kode}}\",\n  \"studentId\": \"{{studentId}}\",\n  \"nomor\": 1,\n  \"answer\": \"b\"\n}",
+          "options": { "raw": { "language": "json" } }
+        },
+        "url": { "raw": "{{baseUrl}}/answer", "host": ["{{baseUrl}}"], "path": ["answer"] }
+      },
+      "response": [],
+      "event": [
+        {
+          "listen": "test",
+          "script": { "exec": [ "pm.test('Status 200', function () { pm.response.to.have.status(200); });", "var json = pm.response.json();", "pm.test('Updated OK', function () { pm.expect(json.success).to.be.true; });" ] }
+        }
+      ]
+    },
+    {
+      "name": "POST - Submit Final Answers (expected 100)",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Authorization", "value": "{{token}}", "type": "text" },
+          { "key": "Content-Type", "value": "application/json", "type": "text" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"kode\": \"{{kode}}\",\n  \"studentId\": \"{{studentId}}\",\n  \"answers\": {\n    \"1\": \"c\",\n    \"2\": \"Sel: Sel tumbuhan memiliki dinding sel, kloroplas dan vakuola besar; sel hewan tidak memilikinya dan biasanya memiliki sentriol.\"\n  },\n  \"submit\": true,\n  \"timeSpentSeconds\": 1200\n}",
+          "options": { "raw": { "language": "json" } }
+        },
+        "url": { "raw": "{{baseUrl}}/answer", "host": ["{{baseUrl}}"], "path": ["answer"] }
+      },
+      "response": [],
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Status 200', function () { pm.response.to.have.status(200); });",
+              "var json = pm.response.json();",
+              "pm.test('Submit success', function () { pm.expect(json.success).to.be.true; });",
+              "pm.test('Nilai returned', function () { pm.expect(json.data).to.have.property('nilai'); });"
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}
